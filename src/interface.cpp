@@ -1,16 +1,32 @@
 #include "RankBoost.h"
 #include <unistd.h>
 
+
+void printUsage()
+{
+	std::cout<<"rankboost usage:\n";
+	std::cout<<"	-f training file name\n";
+	std::cout<<"	-t testing file name\n";
+	std::cout<<"	-o output file name storing the model\n";
+	std::cout<<"	-s total steps (300 as default)\n";
+	std::cout<<"	-n number of thresholds (10 as default)\n";
+}
 int main(int argc, char *argv[])
 {
+	if(argc==1)
+	{
+		printUsage();
+		return 0;
+	}
 	int oc;
 	char *b_opt_arg;
 	char *filename = NULL;
 	char *testfile = NULL;
 	char *outfile = NULL;
-	int steps = 300;
-	int num = 10;// number of thresholds
-	while((oc=getopt(argc,argv,"f:t:o:s:n:"))!=-1)
+	char *loadfile = NULL;
+	int steps = 300; // number of steps
+	int num = 10; // number of thresholds
+	while((oc=getopt(argc,argv,"f:t:o:s:n:l:"))!=-1)
 	{
 		switch(oc)
 		{
@@ -34,23 +50,32 @@ int main(int argc, char *argv[])
 				// number of threshold
 				num = atoi(optarg);
 				break;
+			case 'l':
+				// load model
+				loadfile = optarg;
+				break;
 			case '?':
 				// output usage
-				std::cout<<"rankboost usage:\n";
-				std::cout<<"	-f training file name\n";
-				std::cout<<"	-t testing file name\n";
-				std::cout<<"	-o output file name storing the model\n";
-				std::cout<<"	-s total steps (300 as default)\n";
-				std::cout<<"	-n number of thresholds (10 as default)\n";
+				printUsage();
 				break;
 		}
 	}
-	if(filename==NULL)
+	if(filename==NULL&&loadfile==NULL)
+	{
+		// no model, just skip all following steps
 		return 0;
+	}
 	FileReader fr;
-	fr.read(filename);
-	RankBoostRanker rbr(fr.features(),fr.samples(),steps,num);
-	rbr.learn();
+	RankBoostRanker rbr;
+	if(filename){
+		fr.read(filename);
+		rbr.learn(fr.features(),fr.samples(),steps,num);
+	}
+	else{
+		rbr.loadRanker(loadfile);
+	}
+	if(testfile!=NULL)
+		rbr.testFromFile(testfile);
 	if(outfile!=NULL)
 		rbr.output(outfile);
 }
