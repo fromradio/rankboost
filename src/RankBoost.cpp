@@ -1,10 +1,5 @@
 #include "RankBoost.h"
 
-// void RankBoostRanker::init(const std::vector<long>& features)
-// {
-// 	__features = features;
-// }
-
 bool pair_compare(const std::pair<int,double>& p1, const std::pair<int,double>& p2)
 {
 	return p1.second>p2.second;
@@ -47,7 +42,7 @@ void RankBoostRanker::init(){
 		std::vector<double> fmin(__features.size());
 		for(size_t i=0;i<__features.size();++i){
 			fmax[i]=-1e6;
-			fmin[i]=1e6;
+			fmin[i]=0;// sparse
 		}
 		std::vector<std::vector<std::list<std::pair<int,double> > > > reorgan(__features.size());
 		for(int i=0;i<__features.size();++i)
@@ -71,7 +66,9 @@ void RankBoostRanker::init(){
 		}
 		std::cout<<"Reorganization done"<<std::endl;
 		__thresholds.resize(__features.size());
+		std::cout<<__features.size()<<std::endl;
 		for(int i=0;i<__features.size();++i){
+			// std::cout<<fmin[i]<<' '<<fmax[i]<<std::endl;
 			double step = (fmax[i]-fmin[i])/__num_threshold;
 			__thresholds[i].resize(__num_threshold+1);
 			__thresholds[i][0]=fmax[i];
@@ -79,8 +76,6 @@ void RankBoostRanker::init(){
 				__thresholds[i][j] = __thresholds[i][j-1]-step;
 			__thresholds[i][__num_threshold] = fmin[i]-1e8;
 		}
-		// std::cout<<fmin[22]<<' '<<fmax[22]<<std::endl;
-		// std::cout<<fmin[38]<<' '<<fmax[38]<<std::endl;
 		std::cout<<"Threshold setting done"<<std::endl;
 		for(size_t i=0;i<__features.size();++i){
 			for(size_t j=0;j<__samples.size();++j){
@@ -127,25 +122,14 @@ RBWeakRanker RankBoostRanker::trainWeakRanker()
 						last[k]=l;
 					}
 					else{
-						// last[k]=l-1;
 						break;
 					}
 				}
 			}
-			// if(i==0||i==1||i==22)
-			// {
-			// 	// if(j==1)
-			// 	// {
-			// 	// 	for(int k=0;k<__samples.size();++k)
-			// 	// 		std::cout<<last[k]<<std::endl;
-			// 	// }
-			// 	std::cout<<j<<' '<<r<<' '<<__thresholds[i][j]<<' '<<count<<' '<<__features[i]<<std::endl;
-			// }
 			if(r>maxr)
 			{
 				maxr=r;
 				bestthresh=t;
-				// std::cout<<i<<' '<<r<<' '<<bestthresh<<' '<<0.5*log(__z_t+__z_t*r)/(__z_t-__z_t*r)<<std::endl;
 				bestfid=__features[i];
 			}
 		}
@@ -174,13 +158,11 @@ void RankBoostRanker::learn()
 {
 	// initialize ranker
 	init();
-	for(int i=0; i<__steps; ++i){
+	for(int s=0; s<__steps; ++s){
 		updatePotential();
 		RBWeakRanker wr(trainWeakRanker());
 		__rankers.push_back(wr);
 		double alpha_t = 0.5*log((__z_t+__r_t)/(__z_t-__r_t));
-		// std::cout<<log(2.0)<<std::endl;
-		// std::cout<<__z_t<<' '<<__r_t<<std::endl;
 		__alpha.push_back(alpha_t);
 		__z_t = 0.0;
 		for(int i=0;i<__samples.size();++i){
@@ -197,8 +179,57 @@ void RankBoostRanker::learn()
 				for(int k=j+1;k<__samples[i].size();++k)
 					__dis[i][j][k] /= __z_t;
 		}
-		std::cout<<i<<'\t'<<wr.fid()<<'\t'<<wr.threshold()<<'\t'<<__r_t<<std::endl;
+		std::cout<<s<<'\t'<<wr.fid()<<'\t'<<wr.threshold()<<'\t'<<alpha_t<<'\t'<<__r_t<<std::endl;
 	}
-	// for(int i=0;i<__rankers.size();++i)
-	// 	std::cout<<__rankers[i].fid()<<':'<<__rankers[i].threshold()<<':'<<__alpha[i]<<std::endl;
+}
+
+void RankBoostRanker::output(const char* filename)
+{
+	std::ofstream fout(filename);
+	fout<<__rankers.size()<<std::endl;
+	for(int i=0;i<__rankers.size();++i){
+		fout<<__rankers[i].fid()<<' '<<__rankers[i].threshold()<<' '<<__alpha[i]<<std::endl;
+	}
+}
+
+void RankBoostRanker::loadRanker(const char* filename)
+{
+	std::cout<<"loading ranker"<<std::endl;
+	std::ifstream fin(filename);
+	if(!fin){
+		std::cerr<<"Warning: loading null file, ranker loading skips"<<std::endl;
+		return;
+	}
+	int size;
+	fin>>size;
+	double t,alpha;
+	int n;
+	__rankers.resize(size);
+	__alpha.resize(size);
+	for(int i=0;i<size;++i){
+		fin>>n>>t>>alpha;
+		__rankers[i].setThreshold(t);
+		__rankers[i].setFid(n);
+		__alpha[i] = alpha;
+	}
+}
+
+void RankBoostRanker::testFromFile(const char*filename)
+{
+	std::cout<<"loading test file"<<std::endl;
+	FileReader fr(filename);
+	std::cout<<"done"<<std::endl;
+	const std::vector<RankList>& samples = fr.samples();
+	const std::vector<size_t>& features = fr.features();
+	double rmse = 0;
+	size_t count =0;
+	for(int i=0;i<samples.size();++i){
+		count += samples[i].size();
+		for(int j=0;j<samples[i].size();++j){
+			double score = this->eval(samples[i][j]);
+			rmse+=(score-samples[i][j].label())*(score-samples[i][j].label());
+		}
+	}
+	std::cout<<rmse<<' '<<count<<std::endl;
+	std::cout<<"TEST RMSE IS "<<sqrt(rmse/count)<<std::endl;
 }
