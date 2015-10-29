@@ -2,8 +2,7 @@
 #include <unistd.h>
 
 
-void printUsage()
-{
+void printUsage(){
 	std::cout<<"rankboost usage:\n";
 	std::cout<<"	-f training file name\n";
 	std::cout<<"	-t testing file name\n";
@@ -11,10 +10,8 @@ void printUsage()
 	std::cout<<"	-s total steps (300 as default)\n";
 	std::cout<<"	-n number of thresholds (10 as default)\n";
 }
-int main(int argc, char *argv[])
-{
-	if(argc==1)
-	{
+int main(int argc, char *argv[]){
+	if(argc==1){
 		printUsage();
 		return 0;
 	}
@@ -26,10 +23,8 @@ int main(int argc, char *argv[])
 	char *loadfile = NULL;
 	int steps = 300; // number of steps
 	int num = 10; // number of thresholds
-	while((oc=getopt(argc,argv,"f:t:o:s:n:l:"))!=-1)
-	{
-		switch(oc)
-		{
+	while((oc=getopt(argc,argv,"f:t:o:s:n:l:"))!=-1){
+		switch(oc){
 			case 'f':
 				// train from a file
 				filename = optarg;
@@ -60,8 +55,7 @@ int main(int argc, char *argv[])
 				break;
 		}
 	}
-	if(filename==NULL&&loadfile==NULL)
-	{
+	if(filename==NULL&&loadfile==NULL){
 		// no model, just skip all following steps
 		return 0;
 	}
