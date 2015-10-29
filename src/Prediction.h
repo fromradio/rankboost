@@ -6,7 +6,8 @@ struct ResultNode
 {
 	double val_true;
 	double val_predict;
-	ResultNode(double t,double p):val_true(t),val_predict(p){}
+	size_t id;
+	ResultNode(double t,double p,size_t i):val_true(t),val_predict(p),id(i){}
 };
 
 class Prediction

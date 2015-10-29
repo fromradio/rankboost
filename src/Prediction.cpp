@@ -37,8 +37,9 @@ void Prediction::predict(){
 		std::cerr<<"Ranker or Test data is missing, prediction ends"<<std::endl;
 		return;
 	}
+	size_t i=0;
 	for(std::list<Sample>::iterator sit=__samples.begin(); sit!=__samples.end(); ++sit){
-		__results.push_back(ResultNode(sit->label(),__ranker.eval(*sit)));
+		__results.push_back(ResultNode(sit->label(),__ranker.eval(*sit),i++));
 	}
 }
 
