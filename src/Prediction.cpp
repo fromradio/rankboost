@@ -16,18 +16,20 @@ void Prediction::loadData(const char* datafile){
 	}
 	std::string str,tempstr;
 	double label;
+	size_t id;
 	int qid;
 	size_t feature;
 	double val;
 	while(std::getline(datastream,str)){
 		std::istringstream is(str);
+		is>>id;
 		is>>label;
 		is>>tempstr;
 		is>>qid;
 		FeatureMap fea;
 		while(is>>feature>>val)
 			fea[feature]=val;
-		__samples.push_back(Sample(label,fea));
+		__samples.push_back(Sample(id,label,fea));
 	}
 	__exist_samples=true;
 }
@@ -39,10 +41,21 @@ void Prediction::predict(){
 	}
 	size_t i=0;
 	for(std::list<Sample>::iterator sit=__samples.begin(); sit!=__samples.end(); ++sit){
-		__results.push_back(ResultNode(sit->label(),__ranker.eval(*sit),i++));
+		__results.push_back(ResultNode(sit->label(),__ranker.eval(*sit),sit->id()));
 	}
 }
 
 const std::list<ResultNode>& Prediction::results() const{
 	return __results;
+}
+
+bool compare_result(const ResultNode& n1, const ResultNode& n2){
+	return n1.val_predict>n2.val_predict;
+}
+void Prediction::outputOrdered(const char* filename){
+	std::ofstream fout(filename);
+	__results.sort(compare_result);
+	for(std::list<ResultNode>::iterator iter=__results.begin();iter!=__results.end();++iter){
+		fout<<iter->id<<' '<<iter->val_predict<<std::endl;
+	}
 }

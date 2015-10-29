@@ -14,10 +14,11 @@ int main(int argc, char* argv[]){
 		return 0;
 	}
 	int oc;
-	char *modelfilename;
-	char *testfilename;
+	char *modelfilename=NULL;
+	char *testfilename=NULL;
 	int pretype = 0;
-	while((oc=getopt(argc,argv,"m:t:n:"))!=-1){
+	char *outputfile=NULL;
+	while((oc=getopt(argc,argv,"m:t:n:o:"))!=-1){
 		switch(oc){
 			case 'm':
 				modelfilename=optarg;
@@ -27,6 +28,9 @@ int main(int argc, char* argv[]){
 				break;
 			case 'n':
 				pretype=atoi(optarg);
+				break;
+			case 'o':
+				outputfile=optarg;
 				break;
 			case '?':
 				printUsage();
@@ -64,5 +68,13 @@ int main(int argc, char* argv[]){
 		case 6:
 			std::cout<<"MAP@10 error "<<rj.computeMAP(10)<<std::endl;
 			break;
+		case 7:
+			std::cout<<"MAP@30 error "<<rj.computeMAP(30)<<std::endl;
+			break;
+		default:
+			break;
+	}
+	if(outputfile){
+		pre.outputOrdered(outputfile);
 	}
 }

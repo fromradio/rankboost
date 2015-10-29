@@ -16,12 +16,12 @@
 typedef std::map<size_t,double> FeatureMap;
 class Sample
 {
-	// size_t __ind;
+	size_t __id;
 	double __label;
 	FeatureMap __feas;
 public:
-	Sample(double label,const FeatureMap& feas)
-		: __label(label),__feas(feas){}
+	Sample(size_t id,double label,const FeatureMap& feas)
+		: __id(id),__label(label),__feas(feas){}
 	bool has(size_t i) const{
 		if(__feas.find(i)==__feas.end())
 			return false;
@@ -39,6 +39,9 @@ public:
 	}
 	double label() const{
 		return __label;
+	}
+	size_t id() const{
+		return __id;
 	}
 };
 
@@ -91,6 +94,7 @@ public:
 		std::set<size_t> features;
 		double label;
 		int qid;
+		size_t id;
 		size_t f;
 		double val;
 		size_t curr_qid = -1;
@@ -98,6 +102,7 @@ public:
 		RankList tempsample;
 		while(std::getline(fin,str)) {
 			std::istringstream is(str);
+			is>>id;
 			is>>label;
 			is>>tempstr;
 			is>>qid;
@@ -108,7 +113,7 @@ public:
 				fea[f] = val;
 			}
 			if(qid==curr_qid)
-				tempsample.push_back(Sample(label,fea));
+				tempsample.push_back(Sample(id,label,fea));
 			else{
 				if(begin)
 					__samples.push_back(tempsample);
@@ -116,8 +121,9 @@ public:
 					begin = true;
 				curr_qid = qid;
 				tempsample.clear();
-				tempsample.push_back(Sample(label,fea));
+				tempsample.push_back(Sample(id,label,fea));
 			}
+			// std::cout<<fea.size()<<' '<<qid<<std::endl;
 		}
 		__samples.push_back(tempsample);
 		__features.reserve(features.size());

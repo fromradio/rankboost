@@ -23,6 +23,7 @@ public:
 	void loadRanker(const char* filename);
 	void loadData(const char* datafile);
 	void predict();
+	void outputOrdered(const char* filename);
 	const std::list<ResultNode>& results() const;
 };
 

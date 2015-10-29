@@ -69,6 +69,7 @@ double ResultJudge::computeMAP(int n){
 	for(Results::const_iterator iter=__list_node.begin(); iter!=__list_node.end(); ++iter){
 		if((position = std::lower_bound(copy_list.begin(),copy_list.end(),*iter,compare_acc_true))!=copy_list.begin()){
 			result += (double)(i)/(std::distance(copy_list.begin(),position)+1);
+			std::cout<<std::distance(copy_list.begin(),position)<<std::endl;
 		}
 		++i;
 		if(i>n)
