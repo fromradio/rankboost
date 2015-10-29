@@ -12,7 +12,7 @@ if __name__ == '__main__':
 	with open(file_name) as fp:
 		for line in fp:
 			data = line.rstrip().split(' ')
-			label = int(data[0])
+			label = float(data[0])
 			qid = int(int(data[1].split(':')[1]))
 			dic.setdefault(qid,[])
 			s = ''
