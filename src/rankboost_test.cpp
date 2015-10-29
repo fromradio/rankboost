@@ -47,14 +47,22 @@ int main(int argc, char* argv[]){
 			std::cout<<"RMSE error "<<rj.computeRMSE()<<std::endl;
 			break;
 		case 1:
-			std::cout<<"NDCG@20 error"<<rj.computeNDCG(20)<<std::endl;
+			std::cout<<"NDCG@20 error "<<rj.computeNDCG(20)<<std::endl;
 			break;
 		case 2:
-			std::cout<<"NDCG@100 error"<<rj.computeNDCG(100)<<std::endl;
+			std::cout<<"NDCG@100 error "<<rj.computeNDCG(100)<<std::endl;
 			break;
 		case 3:
-			std::cout<<"NDCG of whole list"<<rj.computeNDCG(-1)<<std::endl;
+			std::cout<<"NDCG of whole list "<<rj.computeNDCG(-1)<<std::endl;
+			break;
 		case 4:
 			std::cout<<"NDCG@10 error "<<rj.computeNDCG(10)<<std::endl;
+			break;
+		case 5:
+			std::cout<<"MAP@100 error "<<rj.computeMAP(100)<<std::endl;
+			break;
+		case 6:
+			std::cout<<"MAP@10 error "<<rj.computeMAP(10)<<std::endl;
+			break;
 	}
 }
