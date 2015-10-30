@@ -20,7 +20,7 @@ public:
 	double computeRMSE();
 	double computeNDCG(int n);
 	double computeMAP(int n);
+	double computeAverageRecall(int n);
 };
-
 
 #endif

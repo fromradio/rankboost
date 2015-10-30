@@ -12,7 +12,6 @@
 #include <set>
 #include <sstream>
 
-
 typedef std::map<size_t,double> FeatureMap;
 class Sample
 {
@@ -123,7 +122,6 @@ public:
 				tempsample.clear();
 				tempsample.push_back(Sample(id,label,fea));
 			}
-			// std::cout<<fea.size()<<' '<<qid<<std::endl;
 		}
 		__samples.push_back(tempsample);
 		__features.reserve(features.size());
