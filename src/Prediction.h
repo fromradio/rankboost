@@ -24,6 +24,7 @@ public:
 	void loadData(const char* datafile);
 	void predict();
 	void outputOrdered(const char* filename);
+	void outputResult(const char* filename);
 	const std::list<ResultNode>& results() const;
 };
 

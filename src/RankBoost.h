@@ -136,7 +136,9 @@ class RankBoostRanker
 private:
 	std::vector<size_t> 		__features;
 	std::map<size_t,size_t> 	__feature_map;
+	std::vector<size_t> 		__penalties;
 	std::vector<std::vector<double> > __potential;
+	std::set<size_t> 			__chosen_features;
 	std::vector<std::vector<std::vector<double> > > __dis; // distribution D(x_i,x_j)
 	std::vector<double> __alpha;
 	std::vector<std::vector<std::vector<size_t> > >__sorted_samples;
@@ -147,7 +149,6 @@ private:
 	double __z_t;
 	double __r_t;
 	std::vector<RBWeakRanker> __rankers;
-
 	/** private functions */
 	void init();
 	RBWeakRanker trainWeakRanker();

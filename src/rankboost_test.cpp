@@ -44,6 +44,9 @@ int main(int argc, char* argv[]){
 	pre.loadRanker(modelfilename);
 	pre.loadData(testfilename);
 	pre.predict();
+	if(outputfile){
+		pre.outputResult(outputfile);
+	}
 	ResultJudge rj(pre.results());
 	switch(pretype){
 		case 0:
@@ -69,7 +72,7 @@ int main(int argc, char* argv[]){
 			std::cout<<"MAP@10 error "<<rj.computeMAP(10)<<std::endl;
 			break;
 		case 6:
-			std::cout<<"MAP@30 error "<<rj.computeMAP(20)<<std::endl;
+			std::cout<<"MAP@20 error "<<rj.computeMAP(20)<<std::endl;
 			break;
 		case 7:
 			std::cout<<"MAP@100 error "<<rj.computeMAP(100)<<std::endl;
@@ -92,7 +95,5 @@ int main(int argc, char* argv[]){
 		default:
 			break;
 	}
-	if(outputfile){
-		pre.outputOrdered(outputfile);
-	}
+	
 }

@@ -44,6 +44,7 @@ void RankBoostRanker::init(){
 			fmax[i]=-1e6;
 			fmin[i]=0;// sparse
 		}
+		__penalties.resize(__features.size(),0);
 		std::vector<std::vector<std::list<std::pair<int,double> > > > reorgan(__features.size());
 		for(int i=0;i<__features.size();++i)
 			reorgan[i].resize(__samples.size());
@@ -80,6 +81,7 @@ void RankBoostRanker::init(){
 		for(size_t i=0;i<__features.size();++i){
 			for(size_t j=0;j<__samples.size();++j){
 				reorgan[i][j].sort(pair_compare);
+				__penalties[i] += reorgan[i][j].size();
 			}
 		}
 		std::cout<<"Sorting done"<<std::endl;
@@ -100,19 +102,27 @@ RBWeakRanker RankBoostRanker::trainWeakRanker()
 {
 	size_t bestfid = -1;
 	double maxr = -10;
+	double mmr = -10;
 	double bestthresh = -1.0;
 	// std::cout<<__features.size()<<std::endl;
 	for(size_t i=0;i<__features.size();++i)
 	{
+		if(__penalties[i]<20||__penalties[i]>100)
+			continue;
+		/** test approach */
+		if(__chosen_features.find(__features[i])!=__chosen_features.end())
+			continue;
 		const std::vector<std::vector<size_t> >& sorted_index = __sorted_samples.at(i);
 		std::vector<int> last(__samples.size(),-1);
 		double r = 0.;
 		size_t count =0;
 		for(int j=0;j<__thresholds[i].size();++j){
 			double t = __thresholds[i][j];
+			size_t penalty = 0;
 			for(int k=0;k<__samples.size();++k){
 				const RankList& rl = __samples.at(k);
 				const std::vector<size_t>& sk = sorted_index.at(k);
+				penalty += sk.size();
 				for(int l=last[k]+1;l<sk.size();++l){
 					const Sample& p = rl.at(sk[l]);
 					if(p.getFeature(__features[i]) > t)
@@ -126,16 +136,32 @@ RBWeakRanker RankBoostRanker::trainWeakRanker()
 					}
 				}
 			}
-			if(r>maxr)
-			{
-				maxr=r;
+			// if (__features[i]==1)
+			// {
+			// 	std::cout<<__features[i]<<' '<<r<<' '<<penalty<<' '<<r/penalty<<std::endl;
+			// }
+			// if(__features[i]==6528||__features[i]==1682)
+			// {
+			// 	std::cout<<__features[i]<<' '<<r<<' '<<penalty<<' '<<r/penalty<<std::endl;
+			// }
+			if(r>maxr){
+				maxr = r;
+				mmr = r;
 				bestthresh=t;
 				bestfid=__features[i];
 			}
+			// if(r/penalty>maxr)
+			// {
+			// 	maxr=r/penalty;
+			// 	// mmr = r;
+			// 	bestthresh=t;
+			// 	bestfid=__features[i];
+			// }
 		}
 	}
 	if(bestfid==-1)
 		std::cerr<<"Error in weak trainer"<<std::endl;
+	// __r_t = __z_t*mmr;
 	__r_t = __z_t*maxr;
 	return RBWeakRanker(bestfid,bestthresh);
 }
@@ -161,8 +187,11 @@ void RankBoostRanker::learn()
 	for(int s=0; s<__steps; ++s){
 		updatePotential();
 		RBWeakRanker wr(trainWeakRanker());
+		__chosen_features.insert(wr.fid());
 		__rankers.push_back(wr);
 		double alpha_t = 0.5*log((__z_t+__r_t)/(__z_t-__r_t));
+		// alpha_t *= __penalties[__feature_map[wr.fid()]];
+		std::cout<<__penalties[__feature_map[wr.fid()]]<<' '<<alpha_t<<std::endl;
 		__alpha.push_back(alpha_t);
 		__z_t = 0.0;
 		for(int i=0;i<__samples.size();++i){
@@ -204,12 +233,13 @@ void RankBoostRanker::loadRanker(const char* filename)
 	fin>>size;
 	double t,alpha;
 	int n;
-	__rankers.resize(size);
+	__rankers.reserve(size);
 	__alpha.resize(size);
 	for(int i=0;i<size;++i){
 		fin>>n>>t>>alpha;
-		__rankers[i].setThreshold(t);
-		__rankers[i].setFid(n);
+		__rankers.push_back(RBWeakRanker(n,t));
+		// __rankers[i].setThreshold(t);
+		// __rankers[i].setFid(n);
 		__alpha[i] = alpha;
 	}
 }

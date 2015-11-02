@@ -7,7 +7,6 @@ bool compare_acc_predict(const ResultNode& n1, const ResultNode& n2){
 		return false;
 	else
 		return n1.id<n2.id;
-	// return n1.val_predict>n2.val_predict;
 }
 
 bool compare_acc_true(const ResultNode& n1, const ResultNode& n2){
@@ -17,7 +16,6 @@ bool compare_acc_true(const ResultNode& n1, const ResultNode& n2){
 		return false;
 	else
 		return n1.id<n2.id;
-	// return n1.val_true>n2.val_true;
 }
 
 double ResultJudge::dcg(int n){
@@ -80,6 +78,7 @@ double ResultJudge::computeMAP(int n){
 			return 0.;
 		}
 	}
+	std::cout<<"here"<<std::endl;
 	Results copy_list(__list_node);
 	copy_list.sort(compare_acc_predict);
 	__list_node.sort(compare_acc_true);
@@ -90,20 +89,24 @@ double ResultJudge::computeMAP(int n){
 	for(Results::const_iterator iter=__list_node.begin();iter!=__list_node.end();++iter){
 		if((position = std::lower_bound(copy_list.begin(),copy_list.end(),*iter,compare_acc_predict))!=copy_list.end()){
 			size_t dis = std::distance(copy_list.begin(),position)+1;
+			std::cout<<dis<<' ';
 			if(dis<=n)
 				inside_n.insert(dis);
-			// std::cout<<std::distance(copy_list.begin(),position)<<std::endl;
 		}
 		++i;
 		if(i>n)
 			break;
 	}
+	std::cout<<std::endl;
+	std::cout<<"here"<<std::endl;
 	i=1;
 	std::cout<<inside_n.size()<<std::endl;
 	for(std::set<size_t>::iterator ii = inside_n.begin();ii!=inside_n.end();++ii){
+		std::cout<<(*ii)<<' ';
 		result+=(double)i/(*ii);
 		++i;
 	}
+	std::cout<<std::endl;
 	return result/n;
 }
 
@@ -128,8 +131,6 @@ double ResultJudge::computeAverageRecall(int n){
 			size_t dis = std::distance(copy_list.begin(),position)+1;
 			if(dis<=n)
 				inside_n.insert(dis);
-			// result += (double)(i)/(std::distance(copy_list.begin(),position)+1);
-			// std::cout<<std::distance(copy_list.begin(),position)<<std::endl;
 		}
 		++i;
 		if(i>n)

@@ -59,3 +59,11 @@ void Prediction::outputOrdered(const char* filename){
 		fout<<iter->id<<' '<<iter->val_predict<<std::endl;
 	}
 }
+
+void Prediction::outputResult(const char* filename){
+	std::ofstream fout(filename);
+	fout<<"label"<<' '<<"score"<<std::endl;
+	for(std::list<ResultNode>::iterator iter=__results.begin();iter!=__results.end();++iter){
+		fout<<iter->id<<' '<<iter->val_predict<<std::endl;
+	}
+}
