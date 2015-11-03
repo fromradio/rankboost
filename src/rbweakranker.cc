@@ -18,7 +18,7 @@ RBWeakRanker::RBWeakRanker(const RBWeakRanker& ranker)
 {
 }
 
-double RBWeakRanker::score(const Sample& s)
+double RBWeakRanker::score(const Sample& s) const
 {
 	if(__fid==-1)
 		return 0.;
@@ -35,7 +35,7 @@ size_t RBWeakRanker::fid() const
 
 void RBWeakRanker::setFid(size_t fid)
 {
-	__fid=f;
+	__fid=fid;
 }
 
 double RBWeakRanker::threshold() const
