@@ -116,6 +116,12 @@ void RankBoostRanker::init(){
 			}
 		}
 	}
+	__whole_number=0;
+	for(size_t i=0;i<__samples.size();++i){
+		__whole_number+=__samples[i].size();
+	}
+	__ratio_feature = 0.033333333;
+	__feature_cutoff=static_cast<size_t>(__ratio_feature*__whole_number);
 	std::cout<<"Done"<<std::endl;
 }
 RBWeakRanker RankBoostRanker::trainWeakRanker()
@@ -126,10 +132,8 @@ RBWeakRanker RankBoostRanker::trainWeakRanker()
 	double bestthresh = -1.0;
 	for(size_t i=0;i<__features.size();++i)
 	{
-		if(__penalties[i]<5||__penalties[i]>90)
-		// if(__penalties[i]>100)
+		if(__penalties[i]<5||__penalties[i]>__feature_cutoff)
 			continue;
-		/** test approach */
 		if(__chosen_features.find(__features[i])!=__chosen_features.end())
 			continue;
 		const std::vector<std::vector<size_t> >& sorted_index = __sorted_samples.at(i);
@@ -166,7 +170,6 @@ RBWeakRanker RankBoostRanker::trainWeakRanker()
 	}
 	if(bestfid==-1)
 		std::cerr<<"Error in weak trainer"<<std::endl;
-	// __r_t = __z_t*mmr;
 	__r_t = __z_t*maxr;
 	return RBWeakRanker(bestfid,bestthresh);
 }
@@ -196,7 +199,6 @@ void RankBoostRanker::learn()
 		__chosen_features.insert(wr.fid());
 		__rankers.push_back(wr);
 		double alpha_t = 0.5*log((__z_t+__r_t)/(__z_t-__r_t));
-		std::cout<<__penalties[__feature_map[wr.fid()]]<<' '<<alpha_t<<std::endl;
 		__alpha.push_back(alpha_t);
 		__z_t = 0.0;
 		for(int i=0;i<__samples.size();++i){

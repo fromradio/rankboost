@@ -1,4 +1,4 @@
-#include "Prediction.h"
+#include "prediction.h"
 
 Prediction::Prediction()
 	:__exist_ranker(false),__exist_samples(false){}
@@ -62,7 +62,7 @@ void Prediction::outputOrdered(const char* filename){
 
 void Prediction::outputResult(const char* filename){
 	std::ofstream fout(filename);
-	fout<<"label"<<' '<<"score"<<std::endl;
+	// fout<<"label"<<' '<<"score"<<std::endl;
 	for(std::list<ResultNode>::iterator iter=__results.begin();iter!=__results.end();++iter){
 		fout<<iter->id<<' '<<iter->val_predict<<std::endl;
 	}

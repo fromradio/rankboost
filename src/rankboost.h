@@ -82,6 +82,15 @@ public:
 
 private:
 
+	// the whole number of samples
+	size_t 						__whole_number;
+
+	// the ration of feature
+	double 						__ratio_feature;
+
+	// feature cutoff
+	size_t 						__feature_cutoff;
+
 	// the feature vector that return the index of a feature
 	std::vector<size_t> 		__features;
 

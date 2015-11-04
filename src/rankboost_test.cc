@@ -1,7 +1,8 @@
-#include "RankBoost.h"
-#include "ResultJudge.h"
-#include "Prediction.h"
+#include "rankboost.h"
+#include "resultjudge.h"
+#include "prediction.h"
 #include <unistd.h>
+#include <iostream>
 
 void printUsage(){
 
@@ -16,7 +17,7 @@ int main(int argc, char* argv[]){
 	int oc;
 	char *modelfilename=NULL;
 	char *testfilename=NULL;
-	int pretype = 0;
+	int pretype = -1;
 	char *outputfile=NULL;
 	while((oc=getopt(argc,argv,"m:t:n:o:"))!=-1){
 		switch(oc){
@@ -49,6 +50,9 @@ int main(int argc, char* argv[]){
 	}
 	ResultJudge rj(pre.results());
 	switch(pretype){
+		case -1:
+			// skip
+			break;
 		case 0:
 			// rmse
 			std::cout<<"RMSE error "<<rj.computeRMSE()<<std::endl;

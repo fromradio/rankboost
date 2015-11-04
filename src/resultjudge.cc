@@ -1,4 +1,4 @@
-#include "ResultJudge.h"
+#include "resultjudge.h"
 
 bool compare_acc_predict(const ResultNode& n1, const ResultNode& n2){
 	if(n1.val_predict>n2.val_predict)

@@ -1,4 +1,4 @@
-#include "RankBoost.h"
+#include "rankboost.h"
 #include "filereader.h"
 #include <unistd.h>
 

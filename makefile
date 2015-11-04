@@ -4,16 +4,18 @@ OBJ_DIR = ./obj
 
 SRC_DIR = ./src
 
-all: clean rankboost rbtest
-rankboost: $(OBJ_DIR)/rankboost_algo.o $(OBJ_DIR)/rankboost.o $(OBJ_DIR)/sample.o $(OBJ_DIR)/rbweakranker.o $(OBJ_DIR)/filereader.o
-	$(CXX) $(OBJ_DIR)/rankboost.o $(OBJ_DIR)/rankboost_algo.o $(OBJ_DIR)/sample.o $(OBJ_DIR)/rbweakranker.o $(OBJ_DIR)/filereader.o -o rankboost
+BIN_DIR = ..
 
-rbtest: $(OBJ_DIR)/rankboost_test.o $(OBJ_DIR)/prediction.o $(OBJ_DIR)/resultjudge.o $(OBJ_DIR)/rankboost_algo.o $(OBJ_DIR)/rankboost.o $(OBJ_DIR)/sample.o $(OBJ_DIR)/rbweakranker.o $(OBJ_DIR)/filereader.o
+all: clean $(BIN_DIR)/rblearn $(BIN_DIR)/rbtest
+$(BIN_DIR)/rblearn: $(OBJ_DIR)/rankboost_algo.o $(OBJ_DIR)/rankboost.o $(OBJ_DIR)/sample.o $(OBJ_DIR)/rbweakranker.o $(OBJ_DIR)/filereader.o
+	$(CXX) $(OBJ_DIR)/rankboost.o $(OBJ_DIR)/rankboost_algo.o $(OBJ_DIR)/sample.o $(OBJ_DIR)/rbweakranker.o $(OBJ_DIR)/filereader.o -o $@
+
+$(BIN_DIR)/rbtest: $(OBJ_DIR)/rankboost_test.o $(OBJ_DIR)/prediction.o $(OBJ_DIR)/resultjudge.o $(OBJ_DIR)/rankboost_algo.o $(OBJ_DIR)/rankboost.o $(OBJ_DIR)/sample.o $(OBJ_DIR)/rbweakranker.o $(OBJ_DIR)/filereader.o
 	$(CXX) $(OBJ_DIR)/rankboost_test.o $(OBJ_DIR)/prediction.o $(OBJ_DIR)/resultjudge.o $(OBJ_DIR)/rankboost_algo.o $(OBJ_DIR)/sample.o $(OBJ_DIR)/rbweakranker.o $(OBJ_DIR)/filereader.o -o $@
 
-$(OBJ_DIR)/rankboost_test.o: $(SRC_DIR)/rankboost_test.cc $(SRC_DIR)/Prediction.h
+$(OBJ_DIR)/rankboost_test.o: $(SRC_DIR)/rankboost_test.cc $(SRC_DIR)/prediction.h
 	$(CXX) -c $(SRC_DIR)/rankboost_test.cc -o $@
-$(OBJ_DIR)/prediction.o: $(SRC_DIR)/prediction.cc $(SRC_DIR)/Prediction.h
+$(OBJ_DIR)/prediction.o: $(SRC_DIR)/prediction.cc $(SRC_DIR)/prediction.h
 	$(CXX) -c $(SRC_DIR)/prediction.cc -o $@
 $(OBJ_DIR)/resultjudge.o: $(SRC_DIR)/resultjudge.cc $(SRC_DIR)/resultjudge.h
 	$(CXX) -c $(SRC_DIR)/resultjudge.cc -o $@

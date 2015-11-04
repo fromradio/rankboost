@@ -1,8 +1,8 @@
 #ifndef RESULT_JUDGE_H__
 #define RESULT_JUDGE_H__
 
-#include "RankBoost.h"
-#include "Prediction.h"
+#include "rankboost.h"
+#include "prediction.h"
 
 
 class ResultJudge
