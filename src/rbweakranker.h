@@ -10,8 +10,7 @@
 
 #include "sample.h"
 
-class RBWeakRanker
-{
+class RBWeakRanker {
 public:
 	// default constructor, fid is set as -1, threshold is set as 0.
 	RBWeakRanker();

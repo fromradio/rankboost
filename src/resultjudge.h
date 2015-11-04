@@ -5,8 +5,7 @@
 #include "prediction.h"
 
 
-class ResultJudge
-{
+class ResultJudge {
 private:
 	typedef std::list<ResultNode> Results;
 	Results __list_node;
@@ -16,7 +15,7 @@ private:
 	double mdcg(int n);
 public:
 	ResultJudge(const Results & listnode)
-		:__list_node(listnode){ }
+		:__list_node(listnode) { }
 	double computeRMSE();
 	double computeNDCG(int n);
 	double computeMAP(int n);

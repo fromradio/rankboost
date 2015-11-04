@@ -32,8 +32,7 @@ typedef std::vector<Sample> RankList;
 //  other information like: RankBoostRanker(samples,features,steps,
 //  num_threshold) and learn them or directly learn from these
 //  information by calling learn function.
-class RankBoostRanker
-{
+class RankBoostRanker {
 
 private:
 	/** private functions */

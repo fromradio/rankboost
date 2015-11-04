@@ -4,46 +4,38 @@
 #include "rbweakranker.h"
 
 RBWeakRanker::RBWeakRanker()
-	: __fid(-1), __threshold(-1.0)
-{
+	: __fid(-1), __threshold(-1.0) {
 }
 
 RBWeakRanker::RBWeakRanker(size_t fid, double threshold)
-	: __fid(fid), __threshold(threshold)
-{
+	: __fid(fid), __threshold(threshold) {
 }
 
 RBWeakRanker::RBWeakRanker(const RBWeakRanker& ranker)
-	: __fid(ranker.fid()), __threshold(ranker.threshold())
-{
+	: __fid(ranker.fid()), __threshold(ranker.threshold()) {
 }
 
-double RBWeakRanker::score(const Sample& s) const
-{
-	if(__fid==-1)
+double RBWeakRanker::score(const Sample& s) const {
+	if(__fid == -1)
 		return 0.;
-	if(s.getFeature(__fid)>__threshold)
+	if(s.getFeature(__fid) > __threshold)
 		return 1.;
 	else
 		return 0.;
 }
 
-size_t RBWeakRanker::fid() const
-{
+size_t RBWeakRanker::fid() const {
 	return __fid;
 }
 
-void RBWeakRanker::setFid(size_t fid)
-{
+void RBWeakRanker::setFid(size_t fid) {
 	__fid=fid;
 }
 
-double RBWeakRanker::threshold() const
-{
+double RBWeakRanker::threshold() const {
 	return __threshold;
 }
 
-void RBWeakRanker::setThreshold(double t)
-{
+void RBWeakRanker::setThreshold(double t) {
 	__threshold=t;
 }

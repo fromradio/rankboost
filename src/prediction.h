@@ -7,18 +7,17 @@
 //	val_true is the true score of the node
 //	val_predict is the prediction score
 //	id is the id of the node
-struct ResultNode
-{
+struct ResultNode {
 	double val_true;
 	double val_predict;
 	size_t id;
-	ResultNode(double t,double p,size_t i):val_true(t),val_predict(p),id(i){}
+	ResultNode(double t, double p, size_t i): val_true(t), val_predict(p), id(i) {
+	}
 };
 
 
 // Prediction of the ranker
-class Prediction
-{
+class Prediction {
 public:
 
 	//

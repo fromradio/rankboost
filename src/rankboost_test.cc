@@ -4,97 +4,96 @@
 #include <unistd.h>
 #include <iostream>
 
-void printUsage(){
+void printUsage() {
 
 }
 
-int main(int argc, char* argv[]){
+int main(int argc, char* argv[]) {
 	/** must load a model file */
-	if(argc==1){
+	if(argc == 1) {
 		printUsage();
 		return 0;
 	}
 	int oc;
-	char *modelfilename=NULL;
-	char *testfilename=NULL;
+	char *modelfilename = NULL;
+	char *testfilename = NULL;
 	int pretype = -1;
-	char *outputfile=NULL;
-	while((oc=getopt(argc,argv,"m:t:n:o:"))!=-1){
+	char *outputfile = NULL;
+	while((oc = getopt(argc,argv,"m:t:n:o:")) != -1) {
 		switch(oc){
 			case 'm':
-				modelfilename=optarg;
+				modelfilename = optarg;
 				break;
 			case 't':
-				testfilename=optarg;
+				testfilename = optarg;
 				break;
 			case 'n':
-				pretype=atoi(optarg);
+				pretype = atoi(optarg);
 				break;
 			case 'o':
-				outputfile=optarg;
+				outputfile = optarg;
 				break;
 			case '?':
 				printUsage();
 				break;
 		}
 	}
-	if(modelfilename==NULL||testfilename==NULL){
+	if(modelfilename == NULL || testfilename == NULL) {
 		return 0;
 	}
 	Prediction pre;
 	pre.loadRanker(modelfilename);
 	pre.loadData(testfilename);
 	pre.predict();
-	if(outputfile){
+	if(outputfile) {
 		pre.outputResult(outputfile);
 	}
 	ResultJudge rj(pre.results());
-	switch(pretype){
+	switch(pretype) {
 		case -1:
 			// skip
 			break;
 		case 0:
 			// rmse
-			std::cout<<"RMSE error "<<rj.computeRMSE()<<std::endl;
+			std::cout << "RMSE error " << rj.computeRMSE() << std::endl;
 			break;
 		case 1:
-			std::cout<<"NDCG@10 error "<<rj.computeNDCG(10)<<std::endl;
+			std::cout << "NDCG@10 error " << rj.computeNDCG(10) << std::endl;
 			
 			break;
 		case 2:
-			std::cout<<"NDCG@20 error "<<rj.computeNDCG(20)<<std::endl;
+			std::cout << "NDCG@20 error " << rj.computeNDCG(20) << std::endl;
 			
 			break;
 		case 3:
-			std::cout<<"NDCG@100 error "<<rj.computeNDCG(100)<<std::endl;
-			
+			std::cout << "NDCG@100 error " << rj.computeNDCG(100) << std::endl;
 			break;
 		case 4:
-			std::cout<<"NDCG of whole list "<<rj.computeNDCG(-1)<<std::endl;
+			std::cout << "NDCG of whole list " << rj.computeNDCG(-1) << std::endl;
 			break;
 		case 5:
-			std::cout<<"MAP@10 error "<<rj.computeMAP(10)<<std::endl;
+			std::cout << "MAP@10 error " << rj.computeMAP(10) << std::endl;
 			break;
 		case 6:
-			std::cout<<"MAP@20 error "<<rj.computeMAP(20)<<std::endl;
+			std::cout << "MAP@20 error " << rj.computeMAP(20) << std::endl;
 			break;
 		case 7:
-			std::cout<<"MAP@100 error "<<rj.computeMAP(100)<<std::endl;
+			std::cout << "MAP@100 error " << rj.computeMAP(100) << std::endl;
 			break;
 		case 8:
-			std::cout<<"MAP of the whole list "<<rj.computeMAP(-1)<<std::endl;
+			std::cout << "MAP of the whole list " << rj.computeMAP(-1) << std::endl;
 			break;
 		case 9:
-			std::cout<<"Average Reall@10 error "<<rj.computeAverageRecall(10)<<std::endl;
+			std::cout << "Average Reall@10 error " << rj.computeAverageRecall(10) << std::endl;
 			break;
 		case 10:
-			std::cout<<"Average Recall@20 error "<<rj.computeAverageRecall(20)<<std::endl;
+			std::cout << "Average Recall@20 error " << rj.computeAverageRecall(20) << std::endl;
 			break;
 		case 11:
-			std::cout<<"Average Recall@100 error "<<rj.computeAverageRecall(100)<<std::endl;
+			std::cout << "Average Recall@100 error " << rj.computeAverageRecall(100) << std::endl;
 			break;
 		case 12:
-			std::cout<<"Average Recall of whole list "<<rj.computeAverageRecall(-1)<<std::endl;
+			std::cout << "Average Recall of whole list " << rj.computeAverageRecall(-1) << std::endl;
 			break;
 		default:
 			break;

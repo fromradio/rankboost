@@ -9,8 +9,7 @@
 // a file reader for class rankboost ranker
 // 	the format of file:
 // 		sample_id sample_label "qid" qid feature_id feature_value...
-class FileReader
-{
+class FileReader {
 public:
 
 	FileReader();

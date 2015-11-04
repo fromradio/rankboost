@@ -4,29 +4,24 @@
 #include "filereader.h"
 #include <fstream>
 
-FileReader::FileReader()
-{
+FileReader::FileReader() {
 }
 
-FileReader::FileReader(const char *filename)
-{
+FileReader::FileReader(const char *filename) {
 	read(filename);
 }
 
-const std::vector<RankList>& FileReader::samples() const
-{
+const std::vector<RankList>& FileReader::samples() const {
 	return __samples;
 }
 
-const std::vector<size_t>& FileReader::features() const
-{
+const std::vector<size_t>& FileReader::features() const {
 	return __features;
 }
 
-void FileReader::read(const char *filename)
-{
+void FileReader::read(const char *filename) {
 	std::ifstream fin(filename);
-	std::string str,tempstr;
+	std::string str, tempstr;
 	std::set<size_t> features;
 	double label;
 	int qid;
@@ -38,19 +33,18 @@ void FileReader::read(const char *filename)
 	RankList tempsample;
 	while(std::getline(fin,str)) {
 		std::istringstream is(str);
-		is>>id;
-		is>>label;
-		is>>tempstr;
-		is>>qid;
+		is >> id;
+		is >> label;
+		is >> tempstr;
+		is >> qid;
 		FeatureMap fea;
-		while(is>>f>>val)
-		{
+		while(is >> f >> val) {
 			features.insert(f);
 			fea[f] = val;
 		}
-		if(qid==curr_qid)
+		if(qid == curr_qid)
 			tempsample.push_back(Sample(id,label,fea));
-		else{
+		else {
 			if(begin)
 				__samples.push_back(tempsample);
 			else
@@ -62,7 +56,7 @@ void FileReader::read(const char *filename)
 	}
 	__samples.push_back(tempsample);
 	__features.reserve(features.size());
-	for(std::set<size_t>::iterator fi = features.begin();fi!=features.end();++fi){
+	for(std::set<size_t>::iterator fi = features.begin(); fi != features.end(); ++ fi){
 		__features.push_back(*fi);
 	}
 }
