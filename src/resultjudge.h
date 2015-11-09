@@ -7,19 +7,19 @@
 
 class ResultJudge {
 private:
-	typedef std::list<ResultNode> Results;
-	Results __list_node;
+  typedef std::list<ResultNode> Results;
+  Results __list_node;
 
-	// private functions
-	double dcg(int n);
-	double mdcg(int n);
+  // private functions
+  double dcg(int n);
+  double mdcg(int n);
 public:
-	ResultJudge(const Results & listnode)
-		:__list_node(listnode) { }
-	double computeRMSE();
-	double computeNDCG(int n);
-	double computeMAP(int n);
-	double computeAverageRecall(int n);
+  ResultJudge(const Results & listnode)
+    :__list_node(listnode) { }
+  double computeRMSE();
+  double computeNDCG(int n);
+  double computeMAP(int n);
+  double computeAverageRecall(int n);
 };
 
 #endif
